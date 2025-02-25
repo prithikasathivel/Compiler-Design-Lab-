@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+// Function to perform left factoring on the given grammar
+void leftFactoring(string nonTerminal, vector<string>& productions) {
+    // We need to identify common prefixes
+    string prefix = "";
+    vector<string> commonPrefix;
+    vector<string> remainingProductions;
+
+    // Iterate over productions to find the common prefix
+    for (const string& production : productions) {
+        if (production[0] == productions[0][0]) { // If they share the same starting character
+            commonPrefix.push_back(production.substr(1)); // Store the remainder of the production (after the prefix)
+        } else {
+            remainingProductions.push_back(production); // If they don't share a common prefix, keep them separate
+        }
+    }
+
+    // Now, we factor out the common prefix and create a new non-terminal
+    string S_prime = nonTerminal + "'"; // Create a new non-terminal
+    
+    // Output the factored grammar
+    cout << "After Left Factoring:" << endl;
+    cout << nonTerminal << " → " << productions[0][0] << S_prime << endl;  // A -> aA'
+    
+    // Output the new rules for the new non-terminal
+    cout << S_prime << " → ";
+    for (size_t i = 0; i < commonPrefix.size(); ++i) {
+        if (i > 0) cout << " | ";  // Add a separator
+        cout << commonPrefix[i];
+    }
+    cout << endl;
+
+    // Output the remaining rules
+    for (const string& remaining : remainingProductions) {
+        cout << nonTerminal << " → " << remaining << endl;
+    }
+}
+
+int main() {
+    string nonTerminalS = "S";
+    vector<string> productionsS = {"aSB", "aBb", "aSb"};
+    
+    cout << "Original Productions:" << endl;
+    for (const string& prod : productionsS) {
+        cout << nonTerminalS << " → " << prod << endl;
+    }
+    
+    // Perform left factoring for S
+    leftFactoring(nonTerminalS, productionsS);
+
+    return 0;
+}
